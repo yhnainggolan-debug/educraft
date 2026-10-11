@@ -12,11 +12,15 @@
   // ---------- save ----------
   const SAVE_KEY = 'educraft.save.v1';
   function defaultSave() {
-    return { credits: 0, weapon: 'w_wood', armor: 'a_none', owned: ['w_wood', 'a_none'], apples: 0, progress: { 1: 0, 2: 0, 3: 0, 4: 0 }, skill: null,
+    return { ver: 2, credits: 0, weapon: 'w_wood', armor: 'a_none', owned: ['w_wood', 'a_none'], apples: 0, progress: { 1: 0, 2: 0, 3: 0, 4: 0 }, skill: null,
       stats: { answered: 0, correct: 0, streakBest: 0, log: [] }, look: { skin: D.LOOK.skin[0], hair: D.LOOK.hair[0], shirt: D.LOOK.shirt[0] }, won: false, tutorialDone: false };
   }
   function loadSave() {
-    try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { const s = Object.assign(defaultSave(), JSON.parse(raw)); s.progress = Object.assign({ 1: 0, 2: 0, 3: 0, 4: 0 }, s.progress); s.stats = Object.assign({ answered: 0, correct: 0, streakBest: 0, log: [] }, s.stats); s.look = Object.assign(defaultSave().look, s.look); return s; } } catch (e) { /* ignore */ }
+    try { const raw = localStorage.getItem(SAVE_KEY); if (raw) { const parsed = JSON.parse(raw), isV1 = !parsed.ver; const s = Object.assign(defaultSave(), parsed); s.progress = Object.assign({ 1: 0, 2: 0, 3: 0, 4: 0 }, s.progress); s.stats = Object.assign({ answered: 0, correct: 0, streakBest: 0, log: [] }, s.stats); s.look = Object.assign(defaultSave().look, s.look);
+      if (isV1) { // v1 → v2: World 1 gained the Training Yard at index 0, shift cleared count so nothing is lost
+        if (s.progress[1] > 0) s.progress[1] += 1; s.ver = 2; try { localStorage.setItem(SAVE_KEY, JSON.stringify(s)); } catch (e2) { /* ignore */ }
+      }
+      return s; } } catch (e) { /* ignore */ }
     return defaultSave();
   }
   function persist() { save.skill = M.getSkill(); try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* ignore */ } }

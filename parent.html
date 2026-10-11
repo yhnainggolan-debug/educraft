@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCraft — Parent zone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #1d1030; --panel: #2a1a4a; --panel2: #3a2460; --ink: #f6f1ff; --muted: #b9a7d6; --gold: #ffd84a; --green: #5fcf5f; --red: #ff5f5f; --blue: #5fe3e0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Nunito", system-ui, sans-serif; padding: 20px 16px 40px; }
+    h1 { font-size: 24px; margin: 0 0 4px; } .sub { color: var(--muted); font-weight: 700; margin-bottom: 18px; }
+    a { color: var(--blue); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .tile { background: var(--panel); border-radius: 14px; padding: 14px 16px; }
+    .tile .k { color: var(--muted); font-weight: 800; font-size: 13px; } .tile .v { font-size: 30px; font-weight: 800; } .tile .s { color: var(--muted); font-size: 13px; font-weight: 700; }
+    h2 { font-size: 17px; margin: 18px 0 8px; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border-radius: 12px; overflow: hidden; }
+    th, td { padding: 9px 10px; text-align: left; font-size: 14px; } th { color: var(--muted); font-size: 12px; } tr + tr td { border-top: 1px solid rgba(255,255,255,0.06); }
+    .bar { height: 10px; background: rgba(0,0,0,0.4); border-radius: 5px; overflow: hidden; } .bar i { display: block; height: 100%; background: var(--green); }
+    .bar i.mid { background: var(--gold); } .bar i.low { background: var(--red); }
+    .ok { color: var(--green); font-weight: 800; } .bad { color: var(--red); font-weight: 800; }
+    .q { color: var(--ink); } .small { color: var(--muted); font-size: 12px; }
+    .days { display: flex; gap: 4px; align-items: flex-end; height: 90px; background: var(--panel); border-radius: 12px; padding: 10px; }
+    .day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); }
+    .day b { width: 100%; background: var(--blue); border-radius: 3px 3px 0 0; min-height: 2px; }
+    .empty { background: var(--panel); border-radius: 12px; padding: 24px; text-align: center; color: var(--muted); font-weight: 700; }
+    button { font-family: inherit; font-weight: 800; background: var(--panel2); color: var(--ink); border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>EduCraft — Parent zone</h1>
+  <div class="sub">Reads the save on this device only. Open it on the iPad he plays on. <a href="index.html">← Back to the game</a></div>
+  <div id="root"></div>
+  <script>
+    (function () {
+      const LABEL = { add: 'Addition', sub: 'Subtraction', mul: 'Multiplication', div: 'Division' };
+      let save = null; try { save = JSON.parse(localStorage.getItem('educraft.save.v1')); } catch (e) { /* ignore */ }
+      const root = document.getElementById('root');
+      if (!save || !save.stats) { root.innerHTML = '<div class="empty">No game data on this device yet. Play a stage first, then come back.</div>'; return; }
+      const log = save.stats.log || [], st = save.stats, skill = save.skill || {};
+      const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+      const cls = (p) => p >= 80 ? '' : p >= 55 ? 'mid' : 'low';
+      // per operation
+      const ops = {}; for (const r of log) { const o = ops[r.op] = ops[r.op] || { n: 0, ok: 0, story: 0, storyOk: 0 }; o.n++; if (r.ok) o.ok++; if (r.k !== 'notation') { o.story++; if (r.ok) o.storyOk++; } }
+      // per day (last 14)
+      const days = []; for (let i = 13; i >= 0; i--) { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i); days.push({ d, key: d.toDateString(), n: 0, ok: 0 }); }
+      for (const r of log) { const k = new Date(r.t).toDateString(); const day = days.find((x) => x.key === k); if (day) { day.n++; if (r.ok) day.ok++; } }
+      const maxN = Math.max(1, ...days.map((d) => d.n));
+      const recent = log.slice(-10), recentAcc = pct(recent.filter((r) => r.ok).length, recent.length);
+      const wrongs = log.filter((r) => !r.ok).slice(-12).reverse();
+      const worldsDone = Object.values(save.progress || {}).reduce((a, b) => a + b, 0);
+      root.innerHTML = `
+        <div class="grid">
+          <div class="tile"><div class="k">Questions answered</div><div class="v">${st.answered}</div><div class="s">${st.correct} correct · ${pct(st.correct, st.answered)}% overall</div></div>
+          <div class="tile"><div class="k">Last 10 answers</div><div class="v">${recentAcc}%</div><div class="s">best streak ${st.streakBest}</div></div>
+          <div class="tile"><div class="k">Stages cleared</div><div class="v">${worldsDone}</div><div class="s">credits in hand ${save.credits} · ${save.won ? 'finished the game 👑' : 'still adventuring'}</div></div>
+        </div>
+        <h2>By operation</h2>
+        <table><tr><th>Operation</th><th style="width:34%">Accuracy</th><th>Answered</th><th>Word problems</th><th>Level</th></tr>
+        ${['add', 'sub', 'mul', 'div'].map((k) => { const o = ops[k] || { n: 0, ok: 0, story: 0, storyOk: 0 }, p = pct(o.ok, o.n), lvl = (skill[k] && skill[k].lvl) || 1;
+          return `<tr><td>${LABEL[k]}</td><td><div class="bar"><i class="${cls(p)}" style="width:${p}%"></i></div><span class="small">${o.n ? p + '%' : '—'}</span></td><td>${o.n}</td><td>${o.story ? pct(o.storyOk, o.story) + '% of ' + o.story : '—'}</td><td>${lvl} / 3</td></tr>`; }).join('')}
+        </table>
+        <div class="small" style="margin-top:6px">Level moves up after ~85% accuracy over recent answers and down after ~45%. Level 3 is the stretch range for Grade 2.</div>
+        <h2>Questions per day (last 14 days)</h2>
+        <div class="days">${days.map((d) => `<div class="day"><b style="height:${Math.round(60 * d.n / maxN)}px" title="${d.n} answered, ${d.ok} correct"></b>${d.d.getDate()}</div>`).join('')}</div>
+        <h2>Recent mistakes</h2>
+        ${wrongs.length ? `<table><tr><th>When</th><th>Question</th><th>His answer</th><th>Correct</th></tr>${wrongs.map((r) => `<tr><td class="small">${new Date(r.t).toLocaleDateString()}</td><td class="q">${r.q}</td><td class="bad">${r.g}</td><td class="ok">${r.a}</td></tr>`).join('')}</table>` : '<div class="empty">No mistakes logged yet.</div>'}
+        <p class="small" style="margin-top:18px">Tip: if one operation stays red for a week, that's the one to practise on paper. <button onclick="if(confirm('Clear the answer log (keeps progress and gear)?')){save.stats.log=[];localStorage.setItem('educraft.save.v1',JSON.stringify(save));location.reload();}">Clear answer log</button></p>`;
+    })();
+  </script>
+</body>
+</html>

@@ -123,10 +123,10 @@
     // attack button (visual only; whole right half is the hit zone)
     const bx = W - 76, by = H - 86, br = 44;
     ctx.save();
-    ctx.globalAlpha = 0.5; ctx.fillStyle = opts && opts.trade ? '#ffd84a' : '#ff5f5f'; ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 0.5; ctx.fillStyle = opts && opts.trade ? '#ffd84a' : (opts && opts.ranged ? '#5fe3e0' : '#ff5f5f'); ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = 0.9; ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.stroke();
     ctx.fillStyle = '#fff'; ctx.font = 'bold 16px "Press Start 2P", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(opts && opts.trade ? 'TRADE' : 'HIT!', bx, by + 1);
+    ctx.fillText(opts && opts.trade ? 'TRADE' : (opts && opts.ranged ? 'SHOOT' : 'HIT!'), bx, by + 1);
     ctx.restore();
   }
 

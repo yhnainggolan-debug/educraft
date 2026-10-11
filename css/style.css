@@ -49,8 +49,8 @@ body { position: fixed; inset: 0; }
 /* ---------- bars & cards ---------- */
 .bar { display: flex; align-items: center; gap: 12px; padding: calc(var(--sat) + 10px) calc(var(--sar) + 14px) 10px calc(var(--sal) + 14px); background: var(--panel); }
 .bar.bottom { padding: 10px calc(var(--sar) + 14px) calc(var(--sab) + 10px) calc(var(--sal) + 14px); justify-content: center; gap: 14px; }
-.bar-title { flex: 1; font-weight: 800; font-size: 18px; }
-.pill { font-family: var(--pix); font-size: 13px; background: #000; color: var(--gold); padding: 8px 12px; border-radius: 999px; white-space: nowrap; }
+.bar-title { flex: 1; min-width: 0; font-weight: 800; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pill { flex: 0 0 auto; font-family: var(--pix); font-size: 13px; background: #000; color: var(--gold); padding: 8px 12px; border-radius: 999px; white-space: nowrap; }
 .gear-summary { padding: 8px 16px; color: var(--muted); font-weight: 700; font-size: 15px; background: rgba(0,0,0,0.25); }
 .card { background: var(--panel); border: 4px solid var(--panel2); border-radius: 16px; padding: 24px 28px; max-width: 520px; width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
 .card.gold { border-color: var(--gold); }
@@ -98,14 +98,6 @@ body { position: fixed; inset: 0; }
 .shop-tab { flex: 1; background: var(--panel2); border: 0; border-bottom: 4px solid rgba(0,0,0,0.45); color: var(--muted); font-weight: 800; font-family: var(--body); font-size: 14px; padding: 10px 4px; border-radius: 8px; min-height: 44px; }
 .shop-tab.active { background: var(--gold); color: #2a1a00; }
 #shop-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-.shop-item { display: flex; align-items: center; gap: 12px; background: var(--panel2); border-radius: 12px; padding: 10px 12px; }
-.shop-item.equipped { outline: 3px solid var(--green); }
-.shop-swatch { width: 40px; height: 40px; border-radius: 8px; border: 3px solid rgba(0,0,0,0.4); flex-shrink: 0; }
-.shop-info { flex: 1; min-width: 0; }
-.shop-name { font-weight: 800; font-size: 17px; }
-.shop-stat { color: var(--gold); font-weight: 800; font-size: 14px; }
-.shop-desc { color: var(--muted); font-size: 13px; font-weight: 700; }
-.shop-buy { min-width: 96px; white-space: nowrap; }
 .shop-earn { padding: 16px; text-align: center; font-weight: 700; }
 .shop-earn .small { color: var(--muted); font-size: 14px; }
 #shop-body .btn.big { align-self: center; margin-bottom: 10px; }
@@ -140,3 +132,50 @@ body { position: fixed; inset: 0; }
   .card { padding: 14px 18px; }
   .btn.big { min-height: 48px; padding: 10px 18px; }
 }
+
+/* ---------- v2: shop catalogue cards ---------- */
+.pix { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+.parent-link { color: rgba(0,0,0,0.65); text-decoration: underline; }
+.shop-card { display: grid; grid-template-columns: 112px 1fr auto; gap: 12px; align-items: center; background: var(--panel2); border-radius: 14px; padding: 10px 12px; }
+.shop-card.equipped { outline: 3px solid var(--green); }
+.shop-card.locked .shop-art { filter: grayscale(0.6); opacity: 0.75; }
+.shop-art { width: 112px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: #000; border-radius: 12px; padding: 8px 0 6px; }
+.shop-kind { font-size: 11px; font-weight: 800; color: var(--muted); }
+.shop-info { min-width: 0; }
+.shop-name { font-weight: 800; font-size: 18px; }
+.shop-name .tag { font-size: 11px; background: var(--green); color: #0b2a0b; padding: 2px 7px; border-radius: 999px; vertical-align: middle; margin-left: 4px; }
+.shop-name .tag.owned { background: var(--muted); color: #1d1030; }
+.shop-lore { color: var(--muted); font-size: 13px; font-weight: 700; margin: 2px 0 6px; line-height: 1.3; }
+.shop-stat { color: var(--gold); font-weight: 800; font-size: 14px; }
+.bars { display: flex; flex-direction: column; gap: 3px; }
+.bar { display: grid; grid-template-columns: 58px 1fr 52px; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; }
+.bar-l { color: var(--muted); }
+.bar-t { position: relative; height: 10px; background: rgba(0,0,0,0.45); border-radius: 5px; overflow: hidden; }
+.bar-t i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--gold); border-radius: 5px; }
+.bar-t b { position: absolute; top: 0; bottom: 0; background: var(--green); }
+.bar-v { text-align: right; color: var(--ink); }
+.bar-v em { font-style: normal; margin-left: 4px; font-size: 11px; }
+.bar-v em.up { color: var(--green); } .bar-v em.down { color: var(--red); }
+.shop-buy { min-width: 96px; white-space: nowrap; }
+@media (max-width: 480px) { .shop-card { grid-template-columns: 80px 1fr; } .shop-art { width: 80px; } .shop-art canvas { width: 64px; height: 64px; } .shop-buy { grid-column: 1 / -1; } }
+
+/* ---------- v2: customise ---------- */
+.look-card { max-width: 640px; }
+.look-body { display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+.look-preview { background: #000; border-radius: 14px; padding: 10px; }
+.look-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+.look-label { width: 54px; text-align: right; font-weight: 800; color: var(--muted); }
+.swatches { display: flex; gap: 8px; }
+.swatch { width: 40px; height: 40px; border-radius: 10px; border: 3px solid rgba(0,0,0,0.4); cursor: pointer; }
+.swatch.active { border-color: #fff; outline: 3px solid var(--gold); }
+
+/* ---------- v2: riddle mode & misc ---------- */
+#modal-math.riddle .modal-box { border-color: var(--purple); box-shadow: 0 0 0 4px rgba(199,125,255,0.25), 0 12px 40px rgba(0,0,0,0.6); }
+#modal-math.riddle .bar { background: #3a1f6e; }
+.math-feedback.good .explain { color: var(--purple); background: rgba(199,125,255,0.12); }
+#hud .btn-mute { font-size: 16px; }
+.stage-btn.tut { background: #1f5a4a; }
+
+#modal-math.nightmare .modal-box { border-color: var(--red); animation: nm 0.7s infinite alternate; }
+#modal-math.nightmare .bar { background: #4a0f0f; }
+@keyframes nm { from { box-shadow: 0 0 0 4px rgba(255,59,59,0.25), 0 12px 40px rgba(0,0,0,0.8); } to { box-shadow: 0 0 0 10px rgba(255,59,59,0.5), 0 12px 40px rgba(0,0,0,0.8); } }

@@ -37,6 +37,21 @@ Mac Mini, or push the folder to GitHub Pages so it works anywhere.)
 | 📚 button → earn credits any time | — |
 | ⏸ → pause, shop, eat Golden Apple, quit | Esc or P |
 
+## What's in v2 (11 Oct 2026)
+
+- Chiptune music per world, a boss track, a heavy-metal track for the nightmare, and sound effects — all synthesised in `js/audio.js`, no audio files. 🔊 button or **M** toggles mute.
+- Training Yard tutorial stage (World 1, stage 🎓) that walks through move → hit → trade → maths → portal.
+- The Trader has a stall and a SHOP sign; the shop is also one tap away on the HUD (🛒).
+- Shop catalogue cards: pixel art, lore, stat bars with +/− comparison against current gear.
+- Ranged weapons: Hunting Bow, Crossbow, Flame Staff (pierces). One weapon equipped at a time; the action button says SHOOT.
+- Armor is visible on the hero (vest → chainmail → plates + helmet → diamond → enchanted glow). Each weapon tier has its own attack animation: swing, slash, overhead chop, double-slash, spin.
+- Difficulty climbs per stage as well as per world; fewer heart drops; fainting tells him exactly which upgrade to earn.
+- Boss doors are sealed: three correct answers to wake the boss.
+- Loot chest when a stage is cleared (full heal, 30% Golden Apple).
+- Hero customisation (skin, hair, shirt) from the title screen.
+- **Herobrine nightmare**: after three clean stage clears in a row (no fainting; a no-damage clear counts double) there's a 60% chance a nightmare starts 10–20s into the next normal stage. Herobrine teleports, calls lightning, and has ~400 HP. Survive 45s and it fades. If he's killed by it, one correct answer exits the nightmare and restores full hearts. Tune in `data.js` → `NIGHTMARE`.
+- `parent.html`: accuracy by operation, questions per day, recent mistakes, adaptive level. Reads the save on the device it's opened on.
+
 ## How the game loop works
 
 1. **Stages.** Each world has 3 stages and a boss. Defeat every enemy, the
@@ -68,7 +83,9 @@ index.html           page, screens and modals
 css/style.css        layout, big touch targets, safe areas
 js/data.js           ← tune here: worlds, stages, enemies, gear, prices, credit payouts
 js/mathgen.js        ← tune here: problem generators, number ranges, story templates
-js/sprites.js        pixel-art tiles and mobs (16×16 string art)
+js/sprites.js        pixel-art tiles, mobs, weapons, armor overlays (16×16 string art)
+js/audio.js          chiptune sequencer, tracks and SFX
+parent.html          parent dashboard (reads the save on that device)
 js/input.js          touch joystick, attack zone, keyboard
 js/engine.js         map generation, movement, combat, enemy AI, bosses, rendering
 js/ui.js             title, world map, HUD, pause, shop, maths modal, save/load
@@ -92,8 +109,7 @@ Progress is saved in the browser's localStorage under `educraft.save.v1`.
 
 ## Roadmap ideas
 
-- Sound effects and music (currently silent — add when he's seen it run)
 - Bahasa Indonesia toggle for word problems
-- A parent dashboard: accuracy by operation, time played
-- Bow and arrows, potions, pets
+- Pets, potions, a second weapon slot
+- 2.5D isometric renderer if he wants it to look more 3D
 - More worlds and stage layouts

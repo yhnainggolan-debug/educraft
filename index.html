@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCraft</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EduCraft">
+  <meta name="theme-color" content="#1d1030">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===== Title ===== -->
+  <section id="screen-title" class="screen center">
+    <div class="title-art">
+      <div class="logo">Edu<span>Craft</span></div>
+      <div class="tagline">Explore · Fight · Do maths · Get stronger</div>
+    </div>
+    <button id="btn-play" class="btn big primary">▶ Play</button>
+    <button id="btn-reset" class="btn ghost small-btn">New adventure (erase progress)</button>
+    <p class="hint">Best on iPad in landscape. Add to Home Screen for fullscreen.</p>
+  </section>
+
+  <!-- ===== World map ===== -->
+  <section id="screen-map" class="screen hidden">
+    <header class="bar">
+      <button id="map-title" class="btn ghost">◁</button>
+      <div class="bar-title">Choose a stage</div>
+      <div class="credits pill">0 ⛃</div>
+    </header>
+    <div class="gear-summary"></div>
+    <div id="world-list" class="scroll"></div>
+    <footer class="bar bottom">
+      <button id="map-earn" class="btn primary">📚 Earn credits</button>
+      <button id="map-shop" class="btn">🛒 Shop</button>
+    </footer>
+  </section>
+
+  <!-- ===== Game ===== -->
+  <section id="screen-game" class="screen hidden">
+    <canvas id="game"></canvas>
+  </section>
+  <div id="hud" class="hidden">
+    <div id="hud-stage"></div>
+    <div class="hud-right">
+      <div class="credits pill">0 ⛃</div>
+      <button id="hud-earn" class="btn small-btn">📚</button>
+      <button id="hud-pause" class="btn small-btn">⏸</button>
+    </div>
+  </div>
+
+  <!-- ===== Stage clear ===== -->
+  <section id="screen-clear" class="screen center hidden">
+    <div class="card">
+      <h1 id="clear-title">Stage clear!</h1>
+      <div id="clear-body"></div>
+      <div class="row">
+        <button id="btn-next" class="btn big primary">Next stage ▶</button>
+        <button id="btn-map" class="btn big">World map</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Fainted ===== -->
+  <section id="screen-down" class="screen center hidden">
+    <div class="card">
+      <h1>You fainted!</h1>
+      <div id="down-body"></div>
+      <div class="row">
+        <button id="btn-retry" class="btn big primary">Try again</button>
+        <button id="down-map" class="btn big">World map</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Victory ===== -->
+  <section id="screen-victory" class="screen center hidden">
+    <div class="card gold">
+      <h1>👑 You saved the world!</h1>
+      <p>The Void King is gone. The Sky Fortress is quiet. You are a true EduCraft hero.</p>
+      <div id="victory-stats"></div>
+      <button id="victory-map" class="btn big primary">Keep exploring</button>
+    </div>
+  </section>
+
+  <!-- ===== Pause ===== -->
+  <div id="modal-pause" class="modal hidden">
+    <div class="modal-box small">
+      <h2>Paused</h2>
+      <button id="pause-resume" class="btn big primary">▶ Resume</button>
+      <button id="pause-earn" class="btn big">📚 Earn credits</button>
+      <button id="pause-shop" class="btn big">🛒 Shop</button>
+      <button id="pause-apple" class="btn big hidden">🍎 Eat Golden Apple</button>
+      <button id="pause-quit" class="btn ghost">Quit to map</button>
+    </div>
+  </div>
+
+  <!-- ===== Shop ===== -->
+  <div id="modal-shop" class="modal hidden">
+    <div class="modal-box">
+      <header class="bar">
+        <div class="bar-title">🛒 Trader</div>
+        <div class="credits pill">0 ⛃</div>
+        <button id="shop-close" class="btn ghost">✕</button>
+      </header>
+      <div class="gear-summary"></div>
+      <nav class="tabs">
+        <button class="shop-tab active" data-tab="weapons">⚔ Weapons</button>
+        <button class="shop-tab" data-tab="armor">🛡 Armor</button>
+        <button class="shop-tab" data-tab="items">🍎 Items</button>
+        <button class="shop-tab" data-tab="earn">📚 Earn</button>
+      </nav>
+      <div id="shop-body" class="scroll"></div>
+    </div>
+  </div>
+
+  <!-- ===== Math ===== -->
+  <div id="modal-math" class="modal hidden">
+    <div class="modal-box math">
+      <header class="bar">
+        <div id="math-kind" class="bar-title">🔢 Number problem</div>
+        <div id="math-streak" class="streak"></div>
+        <div class="credits pill">0 ⛃</div>
+        <button id="math-close" class="btn ghost">✕</button>
+      </header>
+      <div id="math-q" class="math-q">7 + 5 = ?</div>
+      <div id="math-answer" class="math-answer">?</div>
+      <div id="math-feedback" class="math-feedback"></div>
+      <div id="math-pad" class="pad">
+        <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+        <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+        <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+        <button data-k="del" class="pad-del">⌫</button><button data-k="0">0</button><button data-k="ok" class="pad-ok">✔</button>
+      </div>
+      <button id="math-next" class="btn big primary hidden">Next question ▶</button>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/mathgen.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>

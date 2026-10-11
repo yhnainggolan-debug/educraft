@@ -1,0 +1,10 @@
+{
+  "name": "EduCraft",
+  "short_name": "EduCraft",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#1d1030",
+  "theme_color": "#1d1030",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+}
